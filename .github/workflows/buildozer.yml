@@ -21,4 +21,9 @@ jobs:
 
       - name: Set up Docker Buildozer service
         run: |
+          pwd
+          ls -R
+          whoami
+          sudo chmod 777 -R .
+          sudo chmod 777 -R /home/user/hostcwd
           docker run --volume "$(pwd)":/home/user/hostcwd kivy/buildozer android debug
