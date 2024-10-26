@@ -25,4 +25,5 @@ jobs:
           ls -R
           whoami
           sudo chmod 777 -R .
+          df -h
           docker run --volume "$(pwd)":/home/user/hostcwd kivy/buildozer android debug
