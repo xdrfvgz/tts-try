@@ -16,6 +16,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Pre-pull Docker image
+        run: docker pull kivy/buildozer
+
       - name: Set up Docker Buildozer service
         run: |
           docker run --rm -v "$(pwd)":/home/user/hostcwd -w /home/user/hostcwd kivy/buildozer sh -c "buildozer android debug"
