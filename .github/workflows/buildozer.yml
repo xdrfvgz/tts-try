@@ -1,0 +1,11 @@
+version: '3'
+services:
+  buildozer:
+    image: kivy/buildozer
+    volumes:
+      - .:/home/user/hostcwd
+    working_dir: /home/user/hostcwd
+    environment:
+      - ANDROID_HOME=/opt/android-sdk
+      - ANDROID_NDK_HOME=/opt/android-ndk
+    command: buildozer android debug
