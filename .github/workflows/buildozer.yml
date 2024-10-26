@@ -18,5 +18,5 @@ jobs:
 
       - name: Set up Docker Buildozer service
         run: |
-          docker run --rm -v $(pwd):/home/user/hostcwd -w /home/user/hostcwd \
-            kivy/buildozer sh -c "pip install buildozer && buildozer android debug"
+          docker run --rm -v "$(pwd)":/home/user/hostcwd -w /home/user/hostcwd \
+            kivy/buildozer buildozer --version
