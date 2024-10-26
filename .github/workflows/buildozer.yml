@@ -26,4 +26,4 @@ jobs:
           whoami
           sudo chmod 777 -R .
           df -h
-          docker run --volume "$(pwd)":/home/user/hostcwd kivy/buildozer android debug
+          docker run --memory=16g --memory-swap=4g --volume "$(pwd)":/home/user/hostcwd kivy/buildozer android debug
