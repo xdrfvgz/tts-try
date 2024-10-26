@@ -11,4 +11,5 @@ requirements = python3,kivy,onnxruntime,numpy,sounddevice
 android.permissions = INTERNET, RECORD_AUDIO
 
 # Architektur festlegen
+android.ndk = 25b
 android.arch = armeabi-v7a, arm64-v8a
