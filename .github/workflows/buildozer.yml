@@ -1,14 +1,4 @@
-version: '3'
-services:
-  buildozer:
-    image: kivy/buildozer
-    volumes:
-      - .:/home/user/hostcwd
-    working_dir: /home/user/hostcwd
-    environment:
-      - ANDROID_HOME=/opt/android-sdk
-      - ANDROID_NDK_HOME=/opt/android-ndk
-    command: buildozer android debug
+name: Buildozer Build
 
 on:
   push:
@@ -17,3 +7,22 @@ on:
   pull_request:
     branches:
       - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      buildozer:
+        image: kivy/buildozer
+        volumes:
+          - .:/home/user/hostcwd
+        working_dir: /home/user/hostcwd
+        environment:
+          ANDROID_HOME: /opt/android-sdk
+          ANDROID_NDK_HOME: /opt/android-ndk
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Run Buildozer
+        run: buildozer android debug
