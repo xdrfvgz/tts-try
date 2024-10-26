@@ -21,9 +21,4 @@ jobs:
 
       - name: Set up Docker Buildozer service
         run: |
-         mkdir -p $(pwd)/.buildozer && \
-         docker run --volume "$(pwd)":/home/user/hostcwd \
-         --volume "$(pwd)/.buildozer":/home/user/.buildozer \
-         --user $(id -u):$(id -g) \
-           kivy/buildozer \
-           buildozer android debug
+          docker run --volume "$(pwd)":/home/user/hostcwd kivy/buildozer android debug
