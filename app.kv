@@ -1,0 +1,8 @@
+BoxLayout:
+    orientation: 'vertical'
+    TextInput:
+        id: text_input
+        hint_text: "Geben Sie den Text ein..."
+    Button:
+        text: "Sprachsynthese starten"
+        on_press: app.synthesize_speech(self)
