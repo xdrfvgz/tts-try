@@ -13,3 +13,4 @@ android.permissions = INTERNET, RECORD_AUDIO
 # Architektur festlegen
 android.ndk = 25b
 android.arch = armeabi-v7a, arm64-v8a
+android.ndk_download_timeout = 1800
