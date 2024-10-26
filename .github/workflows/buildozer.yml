@@ -11,18 +11,13 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    services:
-      buildozer:
-        image: kivy/buildozer
-        volumes:
-          - .:/home/user/hostcwd
-        working_dir: /home/user/hostcwd
-        environment:
-          ANDROID_HOME: /opt/android-sdk
-          ANDROID_NDK_HOME: /opt/android-ndk
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Run Buildozer
-        run: buildozer android debug 
+      - name: Set up Docker Buildozer service
+        run: |
+          docker run --rm -v $(pwd):/home/user/hostcwd -w /home/user/hostcwd \
+            -e ANDROID_HOME=/opt/android-sdk \
+            -e ANDROID_NDK_HOME=/opt/android-ndk \
+            kivy/buildozer buildozer android debug
