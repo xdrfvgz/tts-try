@@ -9,3 +9,11 @@ services:
       - ANDROID_HOME=/opt/android-sdk
       - ANDROID_NDK_HOME=/opt/android-ndk
     command: buildozer android debug
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
