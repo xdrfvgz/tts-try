@@ -52,8 +52,10 @@ jobs:
       - name: Accept SDK licenses
         run: |
           # Sicherstellen, dass der Pfad aktuell ist
-          whereis sdkmanager 
-          find $ANDROID_HOME -name sdkmanager
+          #whereis sdkmanager 
+          export a=`find $ANDROID_HOME -name sdkmanager`
+          echo $a
+          export PATH=$PATH:$a
           sudo find /usr/ -name sdkmanager
           yes | sdkmanager --licenses
           source $GITHUB_ENV
