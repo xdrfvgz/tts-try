@@ -19,17 +19,28 @@ jobs:
       - name: Install unzip
         run: sudo apt-get install -y unzip
 
+      - name: Check disk space
+        run: df -h
+
       - name: Download and check NDK
         run: |
           # Lade das NDK herunter
-          wget -q https://dl.google.com/android/repository/android-ndk-r25b-linux-x86_64.zip -O android-ndk.zip
+          wget https://dl.google.com/android/repository/android-ndk-r25b-linux-x86_64.zip -O android-ndk.zip || { echo "Download failed"; exit 1; }
           
-          # Überprüfe die Dateigröße und Dateityp
+          # Prüfe, ob die Datei existiert
+          if [ -f "android-ndk.zip" ]; then
+            echo "File downloaded successfully."
+          else
+            echo "File download failed."
+            exit 1
+          fi
+          
+          # Zeige Dateigröße und Typ
           ls -lh android-ndk.zip
           file android-ndk.zip
           
-          # Prüfe die Integrität der Datei mit md5sum
-          md5sum android-ndk.zip
+          # Prüfe die Integrität mit md5sum (falls verfügbar)
+          md5sum android-ndk.zip || echo "md5sum check failed or command not available."
 
       - name: Unzip NDK with detailed output
         run: |
@@ -37,7 +48,7 @@ jobs:
           mkdir -p .buildozer/android/platform
           
           # Entpacke das NDK und zeige detaillierte Ausgaben an
-          unzip -v android-ndk.zip -d .buildozer/android/platform
+          unzip -v android-ndk.zip -d .buildozer/android/platform || { echo "Unzip failed"; exit 1; }
 
       - name: Start Docker Buildozer container
         run: |
