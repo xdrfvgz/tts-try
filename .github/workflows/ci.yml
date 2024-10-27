@@ -1,0 +1,36 @@
+name: Build APK
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install git zip unzip gradle
+        git clone https://github.com/xdrfvgz/tts-try
+        cd tts-try
+        gradle wrapper
+        ./gradle assembleDebug -v
+        
+      
+    - name: Upload APK
+      uses: actions/upload-artifact@v3  # Aktualisiert auf v3
+      with:
+        name: app-debug.apk
+        path: /home/runner/app-debug.apk
+        if-no-files-found: error
