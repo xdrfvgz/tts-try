@@ -38,6 +38,8 @@ jobs:
           wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip
           unzip commandlinetools-linux-7583922_latest.zip
           rm commandlinetools-linux-7583922_latest.zip
+          cmdline-tools/bin/sdkmanager
+          ls -R $HOME/android-sdk
           sudo chown -R $USER:$USER $HOME/android-sdk
 
           # Setzen der Umgebungsvariablen
