@@ -37,29 +37,14 @@ jobs:
           cd $HOME/android-sdk/cmdline-tools
           wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip
           unzip commandlinetools-linux-7583922_latest.zip
-          rm commandlinetools-linux-7583922_latest.zip
-          cmdline-tools/bin/sdkmanager
-          ls -R $HOME/android-sdk
-          sudo chown -R $USER:$USER $HOME/android-sdk
+          mv cmdline-tools latest
+          echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
+          echo "PATH=$PATH:$HOME/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_ENV
 
-          # Setzen der Umgebungsvariablen
-          #echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
-          #echo "PATH=\$PATH:\$ANDROID_HOME/cmdline-tools/bin/" >> $GITHUB_ENV
-
-      - name: Update PATH
-        run: |
-          #export PATH=$PATH:/home/runner/android-sdk/cmdline-tools/cmdline-tools/bin/
-          #find /usr/local/lib/android/sdk -name sdkmanager 
-          #find / -name sdkmanager 
       - name: Accept SDK licenses
         run: |
-          #export PATH=$PATH:$ANDROID_HOME/tools/latest/bin  # Stellen sicher, dass der PATH aktuell ist
-          #sudo find $ANDROID_HOME -name sdkmanager
-          #find $ANDROID_HOME -name sdkmanager
-          #echo"//=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠"; echo""; 
-          echo $PATH
-          #echo""; echo"//=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠";
-          #yes | sdkmanager --licenses  # Lizenzen akzeptieren
+          yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
+          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0"
 
       - name: Clone repository and install dependencies
         run: |
@@ -73,5 +58,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: app-debug.apk
-          path: tts-try/bin/app-debug.apk  # Achte darauf, den korrekten Pfad anzugeben
-          if-no-files-found:  error
+          path: tts-try/bin/app-debug.apk
+          if-no-files-found: error
