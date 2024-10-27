@@ -32,15 +32,6 @@ jobs:
           java-version: '8'
           distribution: 'temurin'
 
-      - name: Cache Buildozer dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.buildozer
-            ~/.gradle
-          key: ${{ runner.os }}-buildozer-${{ hashFiles('**/*.spec', '**/build.gradle') }}
-          restore-keys: |
-            ${{ runner.os }}-buildozer-
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -81,6 +72,17 @@ jobs:
           ln -s $HOME/android-sdk $HOME/.buildozer/android/platform/android-sdk
           mkdir -p $HOME/.buildozer/android/packages
           echo "Build environment setup completed"
+          
+      - name: Cache Buildozer dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.buildozer
+            ~/.gradle
+          key: ${{ runner.os }}-buildozer-${{ hashFiles('**/*.spec', '**/build.gradle') }}
+          restore-keys: |
+            ${{ runner.os }}-buildozer-
+            
       - name: Build APK
         run: |
           cd $GITHUB_WORKSPACE
