@@ -15,3 +15,4 @@ android.ndk = 25b
 android.sdk = 25b
 android.archs = armeabi-v7a, arm64-v8a
 android.ndk_download_timeout = 1800
+log_level = 1
