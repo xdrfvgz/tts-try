@@ -12,7 +12,7 @@ jobs:
       ANDROIDSDK: "$HOME/android-sdk"
       ANDROIDNDK: "$HOME/.buildozer/android/platform/android-ndk-r25c"
       ANDROIDAPI: "30"
-      ANDROIDMINAPI: "24"  # Geändert von 21 auf 24 für numpy
+      ANDROIDMINAPI: "24"
       PACKAGES_PATH: "$HOME/.buildozer/android/packages"
 
     steps:
@@ -49,7 +49,6 @@ jobs:
 
       - name: Setup Android environment
         run: |
-          # Create and export environment variables
           mkdir -p $HOME/android-sdk
           echo "ANDROIDSDK=$HOME/android-sdk" >> $GITHUB_ENV
           echo "ANDROIDNDK=$HOME/.buildozer/android/platform/android-ndk-r25c" >> $GITHUB_ENV
@@ -58,7 +57,6 @@ jobs:
           echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
           echo "PATH=$PATH:$HOME/android-sdk/cmdline-tools/latest/bin:$HOME/android-sdk/platform-tools" >> $GITHUB_ENV
 
-          # Install Android SDK
           cd $HOME/android-sdk
           wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip
           unzip commandlinetools-linux-7583922_latest.zip
@@ -66,7 +64,6 @@ jobs:
           mv cmdline-tools/* cmdline-tools/latest/ || true
           rm -rf cmdline-tools/latest/cmdline-tools
           
-          # Install SDK components
           yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
           $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
 
@@ -100,17 +97,15 @@ jobs:
           android.archs = armeabi-v7a
           android.accept_sdk_license = True
           android.api = 30
-          android.minapi = 24  # Geändert auf 24 für numpy
+          android.minapi = 24
           android.ndk = 25c
+          android.sdk = 30
+          android.ndk_api = 24
           
-          # Skip downloading SDK/NDK as we've already set them up
           android.skip_update = True
-          
-          # Use the SDK and NDK we've already installed
           android.sdk_path = $ANDROIDSDK
           android.ndk_path = $ANDROIDNDK
           
-          # Build settings
           log_level = 2
           p4a.source_dir = $HOME/.buildozer/android/platform/python-for-android
           EOF
