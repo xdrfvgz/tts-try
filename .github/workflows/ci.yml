@@ -28,7 +28,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y git zip unzip python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev python3-distutils
-          pip3 install --user --upgrade Cython==0.29.33 virtualenv
+          python -m pip install --upgrade pip
+          python -m pip install --user --upgrade Cython==0.29.33 virtualenv
+          python -m pip install --user buildozer
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Install Android SDK
         run: |
@@ -55,8 +58,12 @@ jobs:
           mv android-ndk-r25c $HOME/.buildozer/android/platform/android-ndk-r25c
           echo "ANDROID_NDK_HOME=$HOME/.buildozer/android/platform/android-ndk-r25c" >> $GITHUB_ENV
 
-      - name: Update buildozer.spec
+      - name: Setup build environment
         run: |
+          mkdir -p $HOME/.buildozer/android/platform
+          ln -s $HOME/android-sdk $HOME/.buildozer/android/platform/android-sdk
+
+          # Create buildozer.spec
           cat > buildozer.spec << EOF
           [app]
           title = SprachSyntheseApp
@@ -89,15 +96,11 @@ jobs:
 
       - name: Build APK
         run: |
-          # Create symbolic link for SDK
-          ln -s $HOME/android-sdk $HOME/.buildozer/android/platform/android-sdk
-          
-          # Clone and build
           git clone https://github.com/xdrfvgz/tts-try
           cd tts-try
           cp ../buildozer.spec .
-          pip install cython setuptools
-          buildozer android debug -v
+          python -m pip install --user cython setuptools
+          python -m buildozer android debug -v
 
       - name: Upload APK
         uses: actions/upload-artifact@v3
