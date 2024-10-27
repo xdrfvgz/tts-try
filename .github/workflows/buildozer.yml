@@ -27,7 +27,7 @@ jobs:
           # Lade das NDK herunter
           #https://dl.google.com/android/repository/android-ndk-r25b-linux-x86_64.zip -O android-ndk.zip || { echo "Download failed"; exit 1; }
           #wget https://dl.google.com/android/repository/android-ndk-r25b-linux-x86_64.zip
-          wget https://dl.google.com/android/repository/android-ndk-r25b-linux.zip
+          sudo wget https://dl.google.com/android/repository/android-ndk-r25b-linux.zip
           # Prüfe, ob die Datei existiert
           if [ -f "android-ndk.zip" ]; then
             echo "File downloaded successfully."
@@ -46,13 +46,15 @@ jobs:
       - name: Unzip NDK with detailed output
         run: |
           # Erstelle das Zielverzeichnis
-          mkdir -p .buildozer/android/platform
+          sudo chmod 777 . -R
+          sudo mkdir -p .buildozer/android/platform
           
           # Entpacke das NDK und zeige detaillierte Ausgaben an
           #unzip -v android-ndk.zip # -d .buildozer/android/platform || { echo "Unzip failed"; exit 1; }
-          unzip -q android-ndk-r25b-linux.zip -d .buildozer/android/platform
+          sudo chmod 777 . -R
+          sudo unzip -q android-ndk-r25b-linux.zip -d .buildozer/android/platform
           ls -l
       - name: Start Docker Buildozer container
         run: |
           # Starte den Buildozer-Container und binde das Arbeitsverzeichnis ein
-          docker run --memory=4g --memory-swap=8g --volume "$(pwd)":/home/user/hostcwd kivy/buildozer android debug
+          sudo docker run --memory=4g --memory-swap=8g --volume "$(pwd)":/home/user/hostcwd kivy/buildozer android debug
