@@ -1,10 +1,7 @@
-name: Buildozer Build
+name: Build APK
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
     branches:
       - main
 
@@ -13,48 +10,60 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Check out repository
         uses: actions/checkout@v2
 
-      - name: Install unzip
-        run: sudo apt-get install -y unzip
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
 
-      - name: Check disk space
-        run: df -h
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
 
-      - name: Download and check NDK
+      - name: Install necessary tools
         run: |
-          # Lade das NDK herunter
-          #https://dl.google.com/android/repository/android-ndk-r25b-linux-x86_64.zip -O android-ndk.zip || { echo "Download failed"; exit 1; }
-          #wget https://dl.google.com/android/repository/android-ndk-r25b-linux-x86_64.zip
-          sudo wget https://dl.google.com/android/repository/android-ndk-r25b-linux.zip
-          # Prüfe, ob die Datei existiert
-          if [ -f "android-ndk.zip" ]; then
-            echo "File downloaded successfully."
-          else
-            echo "File download failed."
-            exit 1
-          fi
-          
-          # Zeige Dateigröße und Typ
-          ls -lh android-ndk.zip
-          file android-ndk.zip
-          
-          # Prüfe die Integrität mit md5sum (falls verfügbar)
-          md5sum android-ndk.zip || echo "md5sum check failed or command not available."
+          sudo apt update
+          sudo apt install -y git zip unzip wget expect
 
-      - name: Unzip NDK with detailed output
+          # Installiere Android SDK Command Line Tools
+          mkdir -p $HOME/android-sdk/cmdline-tools
+          cd $HOME/android-sdk/cmdline-tools
+          wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip
+          unzip commandlinetools-linux-7583922_latest.zip
+          rm commandlinetools-linux-7583922_latest.zip
+          sudo chown -R $USER:$USER $HOME/android-sdk
+
+          # Setzen der Umgebungsvariablen
+          echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
+          echo "PATH=\$PATH:\$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_ENV
+
+      - name: Accept SDK licenses
         run: |
-          # Erstelle das Zielverzeichnis
-          sudo chmod 777 . -R
-          sudo mkdir -p .buildozer/android/platform
-          
-          # Entpacke das NDK und zeige detaillierte Ausgaben an
-          #unzip -v android-ndk.zip # -d .buildozer/android/platform || { echo "Unzip failed"; exit 1; }
-          sudo chmod 777 . -R
-          sudo unzip -q android-ndk-r25b-linux.zip -d .buildozer/android/platform
-          ls -l
-      - name: Start Docker Buildozer container
+          echo '#!/usr/bin/expect -f' > accept_licenses.exp
+          echo 'set timeout -1' >> accept_licenses.exp
+          echo 'spawn sdkmanager --licenses' >> accept_licenses.exp
+          echo 'expect "Do you accept the license? [y/n]"' >> accept_licenses.exp
+          echo 'send "y\r"' >> accept_licenses.exp
+          echo 'expect eof' >> accept_licenses.exp
+          chmod +x accept_licenses.exp
+          ./accept_licenses.exp
+
+      - name: Clone repository and install dependencies
         run: |
-          # Starte den Buildozer-Container und binde das Arbeitsverzeichnis ein
-          sudo docker run --memory=4g --memory-swap=8g --volume "$(pwd)":/home/user/hostcwd kivy/buildozer android debug
+          source $GITHUB_ENV
+          git clone https://github.com/xdrfvgz/tts-try
+          cd tts-try
+          pip install cython setuptools
+          pip install buildozer 
+          buildozer android debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-debug.apk
+          path: tts-try/bin/app-debug.apk  # Achte darauf, den korrekten Pfad anzugeben
+          if-no-files-found: error
