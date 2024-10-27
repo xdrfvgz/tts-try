@@ -21,7 +21,8 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt install git zip unzip gradle
+        sudo apt install git zip unzip gradle openjdk-17-jdk-headless
+        export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-amd64"
         git clone https://github.com/xdrfvgz/tts-try
         cd tts-try
         gradle wrapper
