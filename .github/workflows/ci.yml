@@ -41,10 +41,14 @@ jobs:
           echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
           echo "PATH=$PATH:$HOME/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_ENV
 
-      - name: Accept SDK licenses
+      - name: Accept SDK licenses and install components
         run: |
+          mkdir -p $HOME/android-sdk/licenses/
+          echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > $HOME/android-sdk/licenses/android-sdk-license
+          echo "84831b9409646a918e30573bab4c9c91346d8abd" > $HOME/android-sdk/licenses/android-sdk-preview-license
+          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --update
+          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0" "build-tools;30.0.3"
           yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
-          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0"
 
       - name: Clone repository and install dependencies
         run: |
@@ -52,7 +56,7 @@ jobs:
           cd tts-try
           pip install cython setuptools
           pip install buildozer 
-          buildozer android debug
+          buildozer android debug deploy run
 
       - name: Upload APK
         uses: actions/upload-artifact@v3
