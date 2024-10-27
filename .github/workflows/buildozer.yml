@@ -49,7 +49,8 @@ jobs:
           mkdir -p .buildozer/android/platform
           
           # Entpacke das NDK und zeige detaillierte Ausgaben an
-          unzip -v android-ndk.zip # -d .buildozer/android/platform || { echo "Unzip failed"; exit 1; }
+          #unzip -v android-ndk.zip # -d .buildozer/android/platform || { echo "Unzip failed"; exit 1; }
+          unzip -q android-ndk-r25b-linux.zip -d .buildozer/android/platform
           ls -l
       - name: Start Docker Buildozer container
         run: |
