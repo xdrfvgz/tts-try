@@ -31,10 +31,12 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt install git zip unzip gradle #openjdk-17-jdk-headless
+        sudo apt install git zip unzip gradle sdkmanager #openjdk-17-jdk-headless
         #export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-amd64"
         git clone https://github.com/xdrfvgz/tts-try
         cd tts-try
+        yes | sdkmanager --licenses
+        sdkmanager --install "build-tools;35.0.0" --accept-license
         pip install cython setuptools
         pip install buildozer 
         buildozer android debug
