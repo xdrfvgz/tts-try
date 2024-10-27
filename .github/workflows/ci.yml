@@ -16,7 +16,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.x'
+          python-version: '3.9'  # Ältere, stabile Version
 
       - name: Set up JDK 17
         uses: actions/setup-java@v2
@@ -27,7 +27,7 @@ jobs:
       - name: Set up Android SDK
         run: |
           sudo apt-get update
-          sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+          sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev python3-setuptools python3-distutils
           pip3 install --user --upgrade Cython==0.29.33 virtualenv
           export PATH=$PATH:~/.local/bin/
 
