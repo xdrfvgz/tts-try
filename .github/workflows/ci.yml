@@ -33,6 +33,14 @@ jobs:
           python -m pip install --user buildozer
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
+      - name: Install python-for-android
+        run: |
+          mkdir -p $HOME/.buildozer/android/platform
+          cd $HOME/.buildozer/android/platform
+          git clone https://github.com/kivy/python-for-android.git
+          cd python-for-android
+          python -m pip install -e .
+
       - name: Install Android SDK
         run: |
           mkdir -p $HOME/android-sdk
@@ -51,7 +59,6 @@ jobs:
 
       - name: Install NDK
         run: |
-          mkdir -p $HOME/.buildozer/android/platform/
           wget https://dl.google.com/android/repository/android-ndk-r25c-linux.zip
           unzip android-ndk-r25c-linux.zip
           mv android-ndk-r25c $HOME/.buildozer/android/platform/android-ndk-r25c
@@ -59,7 +66,6 @@ jobs:
 
       - name: Setup build environment
         run: |
-          mkdir -p $HOME/.buildozer/android/platform
           ln -s $HOME/android-sdk $HOME/.buildozer/android/platform/android-sdk
 
           cat > buildozer.spec << EOF
@@ -90,7 +96,7 @@ jobs:
           
           # Build settings
           log_level = 2
-          p4a.source_dir = /home/runner/work/tts-try/tts-try/tts-try/.buildozer/android/platform/python-for-android
+          p4a.source_dir = $HOME/.buildozer/android/platform/python-for-android
           p4a.local_recipes =
           EOF
 
