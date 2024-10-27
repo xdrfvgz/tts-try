@@ -16,7 +16,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.9'  # Ältere, stabile Version
+          python-version: '3.9'
 
       - name: Set up JDK 17
         uses: actions/setup-java@v2
@@ -24,13 +24,19 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Set up Android SDK
+      - name: Set up Android SDK and NDK
         run: |
           sudo apt-get update
-          sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev python3-setuptools python3-distutils
+          sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev python3-distutils
           pip3 install --user --upgrade Cython==0.29.33 virtualenv
           export PATH=$PATH:~/.local/bin/
 
+          # Install NDK
+          wget https://dl.google.com/android/repository/android-ndk-r25c-linux.zip
+          unzip android-ndk-r25c-linux.zip
+          mv android-ndk-r25c $HOME/.buildozer/android/platform/android-ndk-r25c
+          echo "ANDROID_NDK_HOME=$HOME/.buildozer/android/platform/android-ndk-r25c" >> $GITHUB_ENV
+          
       - name: Install Buildozer
         run: |
           pip3 install --user buildozer
@@ -44,7 +50,10 @@ jobs:
           mkdir -p cmdline-tools/latest
           mv cmdline-tools/* cmdline-tools/latest/ || true
           rm -rf cmdline-tools/latest/cmdline-tools
-          export PATH=$PATH:$HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin
+          
+          # Set Android SDK path
+          echo "ANDROID_HOME=$HOME/.buildozer/android/platform/android-sdk" >> $GITHUB_ENV
+          echo "PATH=$PATH:$HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin:$HOME/.buildozer/android/platform/android-sdk/platform-tools" >> $GITHUB_ENV
           
           # Create license files
           mkdir -p $HOME/.buildozer/android/platform/android-sdk/licenses
@@ -53,13 +62,33 @@ jobs:
           
           # Install required SDK components
           cd $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin
-          echo "y" | ./sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
+          echo "y" | ./sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3" "ndk;25.2.9519653"
           echo "y" | ./sdkmanager --licenses
+
+      - name: Create buildozer.spec
+        run: |
+          cd tts-try
+          cat > buildozer.spec << EOF
+          [app]
+          title = My Application
+          package.name = myapp
+          package.domain = org.test
+          source.dir = .
+          version = 0.1
+          requirements = python3,kivy
+          android.api = 30
+          android.ndk = 25.2.9519653
+          android.sdk = 30
+          android.ndk_path = $HOME/.buildozer/android/platform/android-ndk-r25c
+          android.sdk_path = $HOME/.buildozer/android/platform/android-sdk
+          android.arch = armeabi-v7a
+          EOF
 
       - name: Clone repository and build
         run: |
           git clone https://github.com/xdrfvgz/tts-try
           cd tts-try
+          pip install cython setuptools
           buildozer android debug
 
       - name: Upload APK
