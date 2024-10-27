@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     env:
       ANDROIDSDK: "$HOME/android-sdk"
       ANDROIDNDK: "$HOME/.buildozer/android/platform/android-ndk-r25c"
