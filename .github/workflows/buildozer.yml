@@ -2,7 +2,76 @@ name: Build APK
 
 on:
   push:
+    branches:name: Build APK
+
+on:
+  push:
     branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2.4.0
+        with:
+          python-version: '3.x'
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2.4.0
+        with:
+          java-version: '17'
+          distribution: 'temurin'  # Verwendung von Temurin
+
+      - name: Set JAVA_HOME
+        run: |
+          echo "JAVA_HOME=$JAVA_HOME_17_X64" >> $GITHUB_ENV
+          echo "$JAVA_HOME_17_X64/bin" >> $GITHUB_PATH
+
+      - name: Install Android SDK Command Line Tools
+        run: |
+          sudo apt update
+          sudo apt install -y git zip unzip wget expect
+          mkdir -p $HOME/android-sdk/cmdline-tools
+          cd $HOME/android-sdk/cmdline-tools
+          wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip
+          unzip commandlinetools-linux-7583922_latest.zip
+          rm commandlinetools-linux-7583922_latest.zip
+          sudo chown -R $USER:$USER $HOME/android-sdk
+
+          # Setzen der Umgebungsvariablen
+          echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
+          echo "PATH=\$PATH:\$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_ENV
+
+      - name: Update PATH
+        run: |
+          echo $PATH  # Ausgabe des PATH zur Überprüfung
+
+      - name: Accept SDK licenses
+        run: |
+          export a=`find $ANDROID_HOME -name sdkmanager`
+          export PATH=$PATH:$a
+          yes | sdkmanager --licenses
+
+      - name: Clone repository and install dependencies
+        run: |
+          git clone https://github.com/xdrfvgz/tts-try
+          cd tts-try
+          pip install cython setuptools
+          pip install buildozer 
+          buildozer android debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-debug.apk
+          path: tts-try/bin/app-debug.apk  # Achte darauf, den korrekten Pfad anzugeben
+          if-no-files-found: error
       - main
 
 jobs:
