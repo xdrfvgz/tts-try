@@ -41,14 +41,12 @@ jobs:
           sudo chown -R $USER:$USER $HOME/android-sdk
 
           # Setzen der Umgebungsvariablen
-          echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
-          echo "PATH=\$PATH:\$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_ENV
+          #echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
+          #echo "PATH=\$PATH:\$ANDROID_HOME/cmdline-tools/bin/" >> $GITHUB_ENV
 
       - name: Update PATH
         run: |
           echo $PATH
-          echo "Updated PATH: $PATH"  # Ausgabe des aktualisierten PATHs zur Überprüfung
-
       - name: Accept SDK licenses
         run: |
           export PATH=$PATH:$ANDROID_HOME/tools/latest/bin  # Stellen sicher, dass der PATH aktuell ist
