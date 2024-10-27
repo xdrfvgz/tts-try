@@ -25,8 +25,8 @@ jobs:
       - name: Download and check NDK
         run: |
           # Lade das NDK herunter
-          wget https://dl.google.com/android/repository/android-ndk-r25b-linux-x86_64.zip -O android-ndk.zip || { echo "Download failed"; exit 1; }
-          
+          #https://dl.google.com/android/repository/android-ndk-r25b-linux-x86_64.zip -O android-ndk.zip || { echo "Download failed"; exit 1; }
+          wget https://dl.google.com/android/repository/android-ndk-r25b-linux-x86_64.zip
           # Prüfe, ob die Datei existiert
           if [ -f "android-ndk.zip" ]; then
             echo "File downloaded successfully."
