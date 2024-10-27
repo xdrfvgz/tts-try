@@ -35,6 +35,7 @@ jobs:
         #export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-amd64"
         git clone https://github.com/xdrfvgz/tts-try
         cd tts-try
+        pip install setuptools
         pip install buildozer 
         buildozer android debug
         
