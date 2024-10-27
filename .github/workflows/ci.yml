@@ -39,17 +39,23 @@ jobs:
           unzip commandlinetools-linux-7583922_latest.zip
           rm commandlinetools-linux-7583922_latest.zip
           sudo chown -R $USER:$USER $HOME/android-sdk
-          
+
           # Setzen der Umgebungsvariablen
           echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
           echo "PATH=\$PATH:\$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_ENV
 
+      - name: Update PATH
+        run: |
+          source $GITHUB_ENV
+          echo $PATH  # Ausgabe des PATH zur Überprüfung
+
       - name: Accept SDK licenses
         run: |
-          # Sicherstellen, dass der Pfad aktualisiert wird
-          echo "export PATH=\$PATH:\$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_ENV
           source $GITHUB_ENV
-          yes | sdkmanager --licenses
+          for i in {1..10}; do
+            sdkmanager --licenses || break  # Versuche, die Lizenzen zu akzeptieren, brich bei Erfolg ab
+            sleep 1  # Warte zwischen den Versuchen
+          done
 
       - name: Clone repository and install dependencies
         run: |
