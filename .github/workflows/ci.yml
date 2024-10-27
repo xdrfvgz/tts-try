@@ -23,30 +23,38 @@ jobs:
       with:
         java-version: '11'
         distribution: 'adopt'
+
     - name: Set JAVA_HOME
       run: |
         echo "JAVA_HOME=$JAVA_HOME_11_X64" >> $GITHUB_ENV
         echo "$JAVA_HOME_11_X64/bin" >> $GITHUB_PATH
+
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt install git zip unzip gradle sdkmanager #openjdk-17-jdk-headless
-        #export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-amd64"
+        sudo apt install -y git zip unzip gradle expect
         git clone https://github.com/xdrfvgz/tts-try
         cd tts-try
-        echo "while true; do echo y; sleep 0.5; done | sdkmanager --licenses" > accept.sh
-        chmod +x accept.sh
-        ./accept.sh
-      #  sdkmanager --licenses --sdk_root=$ANDROID_HOME
-        #sdkmanager --install "build-tools;35.0.0" --accept-license
+        
+        # Erstelle ein Expect-Skript, um Lizenzen zu akzeptieren
+        echo '#!/usr/bin/expect -f
+        set timeout -1
+        spawn sdkmanager --licenses
+        expect {
+            "Accept" { send \"y\r\"; exp_continue }
+            eof
+        }' > accept_licenses.exp
+        
+        chmod +x accept_licenses.exp
+        ./accept_licenses.exp  # Führe das Expect-Skript aus
+
         pip install cython setuptools
         pip install buildozer 
         buildozer android debug
-        
-      
+
     - name: Upload APK
-      uses: actions/upload-artifact@v3  # Aktualisiert auf v3
+      uses: actions/upload-artifact@v3
       with:
         name: app-debug.apk
-        path: /home/runner/app-debug.apk
+        path: tts-try/bin/app-debug.apk  # Achte darauf, den korrekten Pfad anzugeben
         if-no-files-found: error
