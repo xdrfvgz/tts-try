@@ -116,11 +116,11 @@ jobs:
           echo "APK build process completed"
 
        - name: Upload APK
-        uses: actions/upload-artifact@v3
-        with:
-          name: app-debug.apk
-          path: bin/*.apk  # Oder "./bin/*.apk"
-          if-no-files-found: error
+         uses: actions/upload-artifact@v3
+         with:
+           name: app-debug.apk
+           path: bin/*.apk  # Oder "./bin/*.apk"
+           if-no-files-found: error
 
       - name: Debug environment
         run: |
