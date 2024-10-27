@@ -35,9 +35,8 @@ jobs:
         #export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-amd64"
         git clone https://github.com/xdrfvgz/tts-try
         cd tts-try
-        gradle wrapper
-        ./gradlew wrapper --gradle-version=7.4.2
-        ./gradlew assembleDebug -v
+        pip install buildozer 
+        buildozer android debug
         
       
     - name: Upload APK
