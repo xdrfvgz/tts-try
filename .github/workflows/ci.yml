@@ -52,7 +52,7 @@ jobs:
       - name: Accept SDK licenses
         run: |
           #export PATH=$PATH:$ANDROID_HOME/tools/latest/bin  # Stellen sicher, dass der PATH aktuell ist
-          find $ANDROID_HOME -name sdkmanager
+          sudo find $ANDROID_HOME -name sdkmanager
           #find $ANDROID_HOME -name sdkmanager
           echo"//=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠"; echo""; 
           echo $PATH
