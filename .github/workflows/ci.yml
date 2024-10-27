@@ -25,7 +25,7 @@ jobs:
         git clone https://github.com/xdrfvgz/tts-try
         cd tts-try
         gradle wrapper
-        ./gradle assembleDebug -v
+        ./gradlew assembleDebug -v
         
       
     - name: Upload APK
