@@ -47,8 +47,8 @@ jobs:
       - name: Update PATH
         run: |
           export PATH=$PATH:/home/runner/android-sdk/cmdline-tools/cmdline-tools/bin/
-          find /usr/local/lib/android/sdk -name sdkmanager 
-          find / -name sdkmanager 
+          #find /usr/local/lib/android/sdk -name sdkmanager 
+          #find / -name sdkmanager 
       - name: Accept SDK licenses
         run: |
           #export PATH=$PATH:$ANDROID_HOME/tools/latest/bin  # Stellen sicher, dass der PATH aktuell ist
