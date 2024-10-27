@@ -24,43 +24,47 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Set JAVA_HOME
+      - name: Set up Android SDK
         run: |
-          echo "JAVA_HOME=$JAVA_HOME_17_X64" >> $GITHUB_ENV
-          echo "$JAVA_HOME_17_X64/bin" >> $GITHUB_PATH
+          sudo apt-get update
+          sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+          pip3 install --user --upgrade Cython==0.29.33 virtualenv
+          export PATH=$PATH:~/.local/bin/
 
-      - name: Install Android SDK Command Line Tools
+      - name: Install Buildozer
         run: |
-          sudo apt update
-          sudo apt install -y git zip unzip wget expect
-          mkdir -p $HOME/android-sdk/cmdline-tools
-          cd $HOME/android-sdk/cmdline-tools
+          pip3 install --user buildozer
+          
+      - name: Install Android SDK
+        run: |
+          mkdir -p $HOME/.buildozer/android/platform/android-sdk
+          cd $HOME/.buildozer/android/platform/android-sdk
           wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip
           unzip commandlinetools-linux-7583922_latest.zip
-          mv cmdline-tools latest
-          echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
-          echo "PATH=$PATH:$HOME/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_ENV
+          mkdir -p cmdline-tools/latest
+          mv cmdline-tools/* cmdline-tools/latest/ || true
+          rm -rf cmdline-tools/latest/cmdline-tools
+          export PATH=$PATH:$HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin
+          
+          # Create license files
+          mkdir -p $HOME/.buildozer/android/platform/android-sdk/licenses
+          echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > $HOME/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+          echo "84831b9409646a918e30573bab4c9c91346d8abd" > $HOME/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
+          
+          # Install required SDK components
+          cd $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin
+          echo "y" | ./sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
+          echo "y" | ./sdkmanager --licenses
 
-      - name: Accept SDK licenses and install components
-        run: |
-          mkdir -p $HOME/android-sdk/licenses/
-          echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > $HOME/android-sdk/licenses/android-sdk-license
-          echo "84831b9409646a918e30573bab4c9c91346d8abd" > $HOME/android-sdk/licenses/android-sdk-preview-license
-          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --update
-          echo "y" | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0" "build-tools;30.0.3"
-          while true; do echo "y"; sleep 2; done | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
-
-      - name: Clone repository and install dependencies
+      - name: Clone repository and build
         run: |
           git clone https://github.com/xdrfvgz/tts-try
           cd tts-try
-          pip install cython setuptools
-          pip install buildozer 
-          buildozer android debug deploy run
+          buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
           name: app-debug.apk
-          path: tts-try/bin/app-debug.apk
+          path: tts-try/bin/*.apk
           if-no-files-found: error
