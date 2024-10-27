@@ -12,7 +12,7 @@ jobs:
       ANDROIDSDK: "$HOME/android-sdk"
       ANDROIDNDK: "$HOME/.buildozer/android/platform/android-ndk-r25c"
       ANDROIDAPI: "30"
-      ANDROIDMINAPI: "21"
+      ANDROIDMINAPI: "24"  # Geändert von 21 auf 24 für numpy
       PACKAGES_PATH: "$HOME/.buildozer/android/packages"
 
     steps:
@@ -54,7 +54,7 @@ jobs:
           echo "ANDROIDSDK=$HOME/android-sdk" >> $GITHUB_ENV
           echo "ANDROIDNDK=$HOME/.buildozer/android/platform/android-ndk-r25c" >> $GITHUB_ENV
           echo "ANDROIDAPI=30" >> $GITHUB_ENV
-          echo "ANDROIDMINAPI=21" >> $GITHUB_ENV
+          echo "ANDROIDMINAPI=24" >> $GITHUB_ENV
           echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
           echo "PATH=$PATH:$HOME/android-sdk/cmdline-tools/latest/bin:$HOME/android-sdk/platform-tools" >> $GITHUB_ENV
 
@@ -100,7 +100,8 @@ jobs:
           android.archs = armeabi-v7a
           android.accept_sdk_license = True
           android.api = 30
-          android.minapi = 21
+          android.minapi = 24  # Geändert auf 24 für numpy
+          android.ndk = 25c
           
           # Skip downloading SDK/NDK as we've already set them up
           android.skip_update = True
