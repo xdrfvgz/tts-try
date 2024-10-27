@@ -35,11 +35,7 @@ jobs:
         #export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-amd64"
         git clone https://github.com/xdrfvgz/tts-try
         cd tts-try
-        echo "#!/bin/bash
-while true; do
-  echo y
-  sleep 1
-done | sdkmanager --licenses" > accept.sh
+        echo "while true; do echo y; sleep 0.5; done | sdkmanager --licenses" > accept.sh
         chmod +x accept.sh
         ./accept.sh
       #  sdkmanager --licenses --sdk_root=$ANDROID_HOME
