@@ -24,15 +24,12 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
 
-      - name: Set JAVA_HOME
-        run: |
-          echo "JAVA_HOME=$JAVA_HOME_11_X64" >> $GITHUB_ENV
-          echo "$JAVA_HOME_11_X64/bin" >> $GITHUB_PATH
-
-      - name: Install Android SDK Command Line Tools
+      - name: Install necessary tools
         run: |
           sudo apt update
-          sudo apt install -y git zip unzip wget
+          sudo apt install -y git unzip wget expect curl # expect wird verwendet für die Lizenzannahme
+          
+          # Installiere Android SDK Command Line Tools
           mkdir -p $HOME/android-sdk/cmdline-tools
           cd $HOME/android-sdk/cmdline-tools
           wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip
@@ -46,8 +43,7 @@ jobs:
 
       - name: Update PATH
         run: |
-          source $GITHUB_ENV
-          echo $PATH  # Ausgabe des PATH zur Überprüfung
+          echo "Updated PATH: $PATH"  # Zeige den aktualisierten PATH an
 
       - name: Accept SDK licenses
         run: |
@@ -59,6 +55,7 @@ jobs:
 
       - name: Clone repository and install dependencies
         run: |
+          source $GITHUB_ENV
           git clone https://github.com/xdrfvgz/tts-try
           cd tts-try
           pip install cython setuptools
