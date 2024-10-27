@@ -100,7 +100,8 @@ jobs:
       - name: Build APK
         run: |
           cd $GITHUB_WORKSPACE
-          python -m buildozer android debug
+          #python -m buildozer android debug
+          python -m buildozer android debug 2>&1 | grep -vi "Receiving\|Unpacking\|updating\|Download"
           echo "APK build process completed"
 
       - name: Upload APK
