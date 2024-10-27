@@ -36,7 +36,7 @@ jobs:
         git clone https://github.com/xdrfvgz/tts-try
         cd tts-try
         yes | sdkmanager --licenses
-        sdkmanager --install "build-tools;35.0.0" --accept-license
+        #sdkmanager --install "build-tools;35.0.0" --accept-license
         pip install cython setuptools
         pip install buildozer 
         buildozer android debug
