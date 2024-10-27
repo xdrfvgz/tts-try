@@ -47,8 +47,8 @@ jobs:
           echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > $HOME/android-sdk/licenses/android-sdk-license
           echo "84831b9409646a918e30573bab4c9c91346d8abd" > $HOME/android-sdk/licenses/android-sdk-preview-license
           $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --update
-          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0" "build-tools;30.0.3"
-          yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
+          echo "y" | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0" "build-tools;30.0.3"
+          while true; do echo "y"; sleep 2; done | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
 
       - name: Clone repository and install dependencies
         run: |
