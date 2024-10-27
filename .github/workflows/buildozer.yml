@@ -46,16 +46,16 @@ jobs:
 
       - name: Update PATH
         run: |
-          source $GITHUB_ENV
+          #source $GITHUB_ENV
           echo $PATH  # Ausgabe des PATH zur Überprüfung
 
       - name: Accept SDK licenses
         run: |
           # Sicherstellen, dass der Pfad aktuell ist
-          source $GITHUB_ENV
           which sdkmanager 
           find $ANDROID_HOME -name sdkmanager 
           yes | sdkmanager --licenses
+          source $GITHUB_ENV
 
       - name: Clone repository and install dependencies
         run: |
