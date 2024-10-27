@@ -21,10 +21,14 @@ jobs:
 
       - name: Set up Docker Buildozer service
         run: |
-          pwd
-          ls -R
-          whoami
-          sudo chmod 777 -R .
-          df -h
-          docker run --memory=4g --memory-swap=8g --volume "$(pwd)":/home/user/hostcwd kivy/buildozer android debug
+          # Erstelle das NDK-Verzeichnis in der Buildozer-Struktur
+          mkdir -p .buildozer/android/platform/android-ndk
+
+          # Lade das NDK manuell herunter
+          wget -q https://dl.google.com/android/repository/android-ndk-r25b-linux-x86_64.zip -O android-ndk.zip
           
+          # Entpacke das NDK in das Buildozer-Verzeichnis
+          unzip -q android-ndk.zip -d .buildozer/android/platform/android-ndk
+
+          # Starte den Buildozer-Container und binde das Arbeitsverzeichnis ein
+          docker run --memory=4g --memory-swap=8g --volume "$(pwd)":/home/user/hostcwd kivy/buildozer android debug
