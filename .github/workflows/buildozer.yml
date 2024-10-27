@@ -115,11 +115,11 @@ jobs:
           fi
           echo "APK build process completed"
 
-      - name: Upload APK
+       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
           name: app-debug.apk
-          path: $GITHUB_WORKSPACE/bin/*.apk
+          path: bin/*.apk  # Oder "./bin/*.apk"
           if-no-files-found: error
 
       - name: Debug environment
