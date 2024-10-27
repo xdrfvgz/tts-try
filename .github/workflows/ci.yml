@@ -46,7 +46,7 @@ jobs:
 
       - name: Update PATH
         run: |
-          export PATH=$PATH:/usr/local/lib/android/sdk
+          export PATH=$PATH:/home/runner/android-sdk/cmdline-tools/cmdline-tools/bin/
           find /usr/local/lib/android/sdk -name sdkmanager 
           find / -name sdkmanager 
       - name: Accept SDK licenses
