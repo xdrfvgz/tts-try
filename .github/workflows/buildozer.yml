@@ -96,7 +96,6 @@ jobs:
           ln -s $HOME/android-sdk $HOME/.buildozer/android/platform/android-sdk
           mkdir -p $HOME/.buildozer/android/packages
           echo "Build environment setup completed"
-
       - name: Build APK
         run: |
           cd $GITHUB_WORKSPACE
@@ -117,7 +116,7 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v3  # Aktualisiert auf v3
         with:
-        name: app-debug.apk
+          name: app-debug.apk
           path: /home/runner/app-debug.apk
           if-no-files-found: error
 
