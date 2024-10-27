@@ -48,18 +48,18 @@ jobs:
 
       - name: Update PATH
         run: |
-          export PATH=$PATH:/home/runner/android-sdk/cmdline-tools/cmdline-tools/bin/
+          #export PATH=$PATH:/home/runner/android-sdk/cmdline-tools/cmdline-tools/bin/
           #find /usr/local/lib/android/sdk -name sdkmanager 
           #find / -name sdkmanager 
       - name: Accept SDK licenses
         run: |
           #export PATH=$PATH:$ANDROID_HOME/tools/latest/bin  # Stellen sicher, dass der PATH aktuell ist
-          sudo find $ANDROID_HOME -name sdkmanager
+          #sudo find $ANDROID_HOME -name sdkmanager
           #find $ANDROID_HOME -name sdkmanager
-          echo"//=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠"; echo""; 
+          #echo"//=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠"; echo""; 
           echo $PATH
-          echo""; echo"//=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠";
-          yes | sdkmanager --licenses  # Lizenzen akzeptieren
+          #echo""; echo"//=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠";
+          #yes | sdkmanager --licenses  # Lizenzen akzeptieren
 
       - name: Clone repository and install dependencies
         run: |
