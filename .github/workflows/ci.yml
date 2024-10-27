@@ -46,11 +46,15 @@ jobs:
 
       - name: Update PATH
         run: |
+          echo $PATH
           echo "Updated PATH: $PATH"  # Ausgabe des aktualisierten PATHs zur Überprüfung
 
       - name: Accept SDK licenses
         run: |
           export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin  # Stellen sicher, dass der PATH aktuell ist
+          echo"//=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠"; echo""; 
+          echo $PATH
+          echo""; echo"//=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠";
           yes | sdkmanager --licenses  # Lizenzen akzeptieren
 
       - name: Clone repository and install dependencies
