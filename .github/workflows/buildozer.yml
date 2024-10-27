@@ -102,6 +102,17 @@ jobs:
           cd $GITHUB_WORKSPACE
           #python -m buildozer android debug
           python -m buildozer android debug 2>&1 | grep -vi "Receiving\|Compressing\|Unpacking\|updating\|Download\|Resolving\|Counting"
+          echo "Starting APK build..."
+          # Hauptbuild mit Filterung
+          python -m buildozer android debug 2>&1 | grep -E "^\[INFO\]|^\[ERROR\]|^#|^Traceback|error:" || true
+          
+          # Prüfen ob der Build erfolgreich war
+          if [ -f "bin/"*.apk ]; then
+            echo "Build successful - APK created"
+          else
+            echo "Build failed - No APK found"
+            exit 1
+          fi
           echo "APK build process completed"
 
       - name: Upload APK
