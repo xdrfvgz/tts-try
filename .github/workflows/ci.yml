@@ -24,55 +24,31 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Set up Android SDK and NDK
+      - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev python3-distutils
           pip3 install --user --upgrade Cython==0.29.33 virtualenv
-          export PATH=$PATH:~/.local/bin/
 
-          # Create buildozer directory structure
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          cmd-tools-version: 12.0
+
+      - name: Install NDK
+        run: |
           mkdir -p $HOME/.buildozer/android/platform/
-
-          # Install NDK
           wget https://dl.google.com/android/repository/android-ndk-r25c-linux.zip
           unzip android-ndk-r25c-linux.zip
           mv android-ndk-r25c $HOME/.buildozer/android/platform/android-ndk-r25c
-          echo "ANDROID_NDK_HOME=$HOME/.buildozer/android/platform/android-ndk-r25c" >> $GITHUB_ENV
-          
-      - name: Install Buildozer
-        run: |
-          pip3 install --user buildozer
-          
-      - name: Install Android SDK
-        run: |
-          mkdir -p $HOME/.buildozer/android/platform/android-sdk
-          cd $HOME/.buildozer/android/platform/android-sdk
-          wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip
-          unzip commandlinetools-linux-7583922_latest.zip
-          mkdir -p cmdline-tools/latest
-          mv cmdline-tools/* cmdline-tools/latest/ || true
-          rm -rf cmdline-tools/latest/cmdline-tools
-          
-          # Set Android SDK path
-          echo "ANDROID_HOME=$HOME/.buildozer/android/platform/android-sdk" >> $GITHUB_ENV
-          echo "PATH=$PATH:$HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin:$HOME/.buildozer/android/platform/android-sdk/platform-tools" >> $GITHUB_ENV
-          
-          # Create license files
-          mkdir -p $HOME/.buildozer/android/platform/android-sdk/licenses
-          echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > $HOME/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
-          echo "84831b9409646a918e30573bab4c9c91346d8abd" > $HOME/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
-          
-          # Install required SDK components
-          cd $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin
-          echo "y" | ./sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
-          echo "y" | ./sdkmanager --licenses
 
-      - name: Clone repository and build
+      - name: Accept licenses and install components
         run: |
-          git clone https://github.com/xdrfvgz/tts-try
-          cd tts-try
-          # Aktualisiere buildozer.spec
+          yes | sdkmanager --licenses
+          sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
+          
+      - name: Update buildozer.spec
+        run: |
           cat > buildozer.spec << EOF
           [app]
           title = SprachSyntheseApp
@@ -89,15 +65,36 @@ jobs:
           # Android specific settings
           android.ndk = 25c
           android.arch = armeabi-v7a, arm64-v8a
-          android.ndk_path = $HOME/.buildozer/android/platform/android-ndk-r25c
-          android.sdk_path = $HOME/.buildozer/android/platform/android-sdk
-          android.ndk_download_timeout = 1800
+          android.accept_sdk_license = True
           android.api = 30
           android.minapi = 21
           android.sdk = 30
-          android.accept_sdk_license = True
-          EOF
+          android.ndk_api = 21
           
+          # Skip downloading SDK/NDK as we've already set them up
+          android.skip_update = True
+          
+          # Use the SDK and NDK we've already installed
+          android.sdk_path = $ANDROID_SDK_ROOT
+          android.ndk_path = $HOME/.buildozer/android/platform/android-ndk-r25c
+          
+          # Buildozer settings
+          log_level = 2
+          EOF
+
+      - name: Install buildozer and build
+        run: |
+          # Install buildozer
+          pip3 install --user buildozer
+          
+          # Create symbolic link to SDK
+          mkdir -p $HOME/.buildozer/android/platform
+          ln -s $ANDROID_SDK_ROOT $HOME/.buildozer/android/platform/android-sdk
+          
+          # Clone and build
+          git clone https://github.com/xdrfvgz/tts-try
+          cd tts-try
+          cp ../buildozer.spec .
           pip install cython setuptools
           buildozer android debug -v
 
