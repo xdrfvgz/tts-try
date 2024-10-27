@@ -53,6 +53,7 @@ jobs:
         run: |
           export PATH=$PATH:$ANDROID_HOME/tools/latest/bin  # Stellen sicher, dass der PATH aktuell ist
           find $ANDROID_HOME -name sdkmanager
+          #find $ANDROID_HOME -name sdkmanager
           echo"//=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠"; echo""; 
           echo $PATH
           echo""; echo"//=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠";
@@ -71,4 +72,4 @@ jobs:
         with:
           name: app-debug.apk
           path: tts-try/bin/app-debug.apk  # Achte darauf, den korrekten Pfad anzugeben
-          if-no-files-found: error
+          if-no-files-found:  error
