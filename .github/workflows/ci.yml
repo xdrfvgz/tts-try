@@ -8,6 +8,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      ANDROIDSDK: "$HOME/android-sdk"
+      ANDROIDNDK: "$HOME/.buildozer/android/platform/android-ndk-r25c"
+      ANDROIDAPI: "30"
+      ANDROIDMINAPI: "21"
+      PACKAGES_PATH: "$HOME/.buildozer/android/packages"
 
     steps:
       - name: Check out repository
@@ -41,9 +47,18 @@ jobs:
           cd python-for-android
           python -m pip install -e .
 
-      - name: Install Android SDK
+      - name: Setup Android environment
         run: |
+          # Create and export environment variables
           mkdir -p $HOME/android-sdk
+          echo "ANDROIDSDK=$HOME/android-sdk" >> $GITHUB_ENV
+          echo "ANDROIDNDK=$HOME/.buildozer/android/platform/android-ndk-r25c" >> $GITHUB_ENV
+          echo "ANDROIDAPI=30" >> $GITHUB_ENV
+          echo "ANDROIDMINAPI=21" >> $GITHUB_ENV
+          echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
+          echo "PATH=$PATH:$HOME/android-sdk/cmdline-tools/latest/bin:$HOME/android-sdk/platform-tools" >> $GITHUB_ENV
+
+          # Install Android SDK
           cd $HOME/android-sdk
           wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip
           unzip commandlinetools-linux-7583922_latest.zip
@@ -51,22 +66,22 @@ jobs:
           mv cmdline-tools/* cmdline-tools/latest/ || true
           rm -rf cmdline-tools/latest/cmdline-tools
           
-          export ANDROID_HOME=$HOME/android-sdk
-          export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
-          
-          yes | sdkmanager --licenses
-          sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
+          # Install SDK components
+          yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
+          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
 
       - name: Install NDK
         run: |
+          mkdir -p $HOME/.buildozer/android/platform/
           wget https://dl.google.com/android/repository/android-ndk-r25c-linux.zip
           unzip android-ndk-r25c-linux.zip
           mv android-ndk-r25c $HOME/.buildozer/android/platform/android-ndk-r25c
-          echo "ANDROID_NDK_HOME=$HOME/.buildozer/android/platform/android-ndk-r25c" >> $GITHUB_ENV
 
       - name: Setup build environment
         run: |
+          mkdir -p $HOME/.buildozer/android/platform
           ln -s $HOME/android-sdk $HOME/.buildozer/android/platform/android-sdk
+          mkdir -p $HOME/.buildozer/android/packages
 
           cat > buildozer.spec << EOF
           [app]
@@ -91,13 +106,12 @@ jobs:
           android.skip_update = True
           
           # Use the SDK and NDK we've already installed
-          android.sdk_path = $HOME/android-sdk
-          android.ndk_path = $HOME/.buildozer/android/platform/android-ndk-r25c
+          android.sdk_path = $ANDROIDSDK
+          android.ndk_path = $ANDROIDNDK
           
           # Build settings
           log_level = 2
           p4a.source_dir = $HOME/.buildozer/android/platform/python-for-android
-          p4a.local_recipes =
           EOF
 
       - name: Build APK
