@@ -31,6 +31,9 @@ jobs:
           pip3 install --user --upgrade Cython==0.29.33 virtualenv
           export PATH=$PATH:~/.local/bin/
 
+          # Create buildozer directory structure
+          mkdir -p $HOME/.buildozer/android/platform/
+
           # Install NDK
           wget https://dl.google.com/android/repository/android-ndk-r25c-linux.zip
           unzip android-ndk-r25c-linux.zip
@@ -62,34 +65,41 @@ jobs:
           
           # Install required SDK components
           cd $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin
-          echo "y" | ./sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3" "ndk;25.2.9519653"
+          echo "y" | ./sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
           echo "y" | ./sdkmanager --licenses
-
-      - name: Create buildozer.spec
-        run: |
-          cd tts-try
-          cat > buildozer.spec << EOF
-          [app]
-          title = My Application
-          package.name = myapp
-          package.domain = org.test
-          source.dir = .
-          version = 0.1
-          requirements = python3,kivy
-          android.api = 30
-          android.ndk = 25.2.9519653
-          android.sdk = 30
-          android.ndk_path = $HOME/.buildozer/android/platform/android-ndk-r25c
-          android.sdk_path = $HOME/.buildozer/android/platform/android-sdk
-          android.arch = armeabi-v7a
-          EOF
 
       - name: Clone repository and build
         run: |
           git clone https://github.com/xdrfvgz/tts-try
           cd tts-try
+          # Aktualisiere buildozer.spec
+          cat > buildozer.spec << EOF
+          [app]
+          title = SprachSyntheseApp
+          package.name = sprache
+          package.domain = org.example
+          source.dir = .
+          source.include_exts = py,png,jpg,kv,atlas
+          source.exclude_exts = spec
+          source.exclude_dirs = tests
+          version = 0.1
+          requirements = python3,kivy,onnxruntime,numpy,sounddevice
+          android.permissions = INTERNET, RECORD_AUDIO
+
+          # Android specific settings
+          android.ndk = 25c
+          android.arch = armeabi-v7a, arm64-v8a
+          android.ndk_path = $HOME/.buildozer/android/platform/android-ndk-r25c
+          android.sdk_path = $HOME/.buildozer/android/platform/android-sdk
+          android.ndk_download_timeout = 1800
+          android.api = 30
+          android.minapi = 21
+          android.sdk = 30
+          android.accept_sdk_license = True
+          EOF
+          
           pip install cython setuptools
-          buildozer android debug
+          buildozer android debug -v
 
       - name: Upload APK
         uses: actions/upload-artifact@v3
