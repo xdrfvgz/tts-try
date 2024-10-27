@@ -46,10 +46,12 @@ jobs:
 
       - name: Update PATH
         run: |
-          echo $PATH
+          export PATH=$PATH:/usr/local/lib/android/sdk
+          find /usr/local/lib/android/sdk -name sdkmanager 
+          find / -name sdkmanager 
       - name: Accept SDK licenses
         run: |
-          export PATH=$PATH:$ANDROID_HOME/tools/latest/bin  # Stellen sicher, dass der PATH aktuell ist
+          #export PATH=$PATH:$ANDROID_HOME/tools/latest/bin  # Stellen sicher, dass der PATH aktuell ist
           find $ANDROID_HOME -name sdkmanager
           #find $ANDROID_HOME -name sdkmanager
           echo"//=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠=≠"; echo""; 
