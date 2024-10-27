@@ -100,11 +100,9 @@ jobs:
       - name: Build APK
         run: |
           cd $GITHUB_WORKSPACE
-          #python -m buildozer android debug
-          python -m buildozer android debug 2>&1 | grep -vi "Receiving\|Compressing\|Unpacking\|updating\|Download\|Resolving\|Counting"
           echo "Starting APK build..."
           # Hauptbuild mit Filterung
-          python -m buildozer android debug 2>&1 | grep -E "^\[INFO\]|^\[ERROR\]|^#|^Traceback|error:" || true
+          python -m buildozer android debug 2>&1 | grep -E "^\[INFO\]|^\[ERROR\]|^#|^Traceback|error:" | grep -vi "Receiving\|Compressing\|Unpacking\|updating\|Download\|Resolving\|Counting" || true
           
           # Prüfen ob der Build erfolgreich war
           if [ -f "bin/"*.apk ]; then
@@ -115,12 +113,12 @@ jobs:
           fi
           echo "APK build process completed"
 
-       - name: Upload APK
-         uses: actions/upload-artifact@v3
-         with:
-           name: app-debug.apk
-           path: bin/*.apk  # Oder "./bin/*.apk"
-           if-no-files-found: error
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-debug.apk
+          path: bin/*.apk
+          if-no-files-found: error
 
       - name: Debug environment
         run: |
