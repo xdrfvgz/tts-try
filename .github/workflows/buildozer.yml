@@ -101,7 +101,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE
           #python -m buildozer android debug
-          python -m buildozer android debug 2>&1 | grep -vi "Receiving\|Compressing\|Unpacking\|updating\|Download"
+          python -m buildozer android debug 2>&1 | grep -vi "Receiving\|Compressing\|Unpacking\|updating\|Download\|Resolving\|Counting"
           echo "APK build process completed"
 
       - name: Upload APK
