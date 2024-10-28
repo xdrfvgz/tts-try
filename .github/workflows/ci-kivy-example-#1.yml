@@ -92,23 +92,24 @@ jobs:
           echo "Starting APK build..."
           # Hauptbuild mit Filterung
           python -m buildozer android debug 2>&1 | grep -E "^\[INFO\]|^\[ERROR\]|^#|^Traceback|error:" | grep -vi "Receiving\|Compressing\|Unpacking\|updating\|Download\|Resolving\|Counting" || true
-          
           # Prüfen ob der Build erfolgreich war
-          if [ -f "bin/"*.apk ]; then
-            echo "Build successful - APK created"
-          else
-            echo "Build failed - No APK found"
-            exit 1
-          fi
-          echo "APK build process completed"
+          #if [ -f "bin/"*.apk ]; then
+          #  echo "Build successful - APK created"
+          #else
+          #  echo "Build failed - No APK found"
+          #  exit 1
+          #fi
+          #echo "APK build process completed"
+          find ~ -name "*.apk*
           ls -R bin/
           cp bin/*.apk $HOME/
+          tar -cf apk.tar ~/*.apk
           
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
-          name: sprache-0.1-armeabi-v7a_arm64-v8a-debug.apk
-          path: /home/runner/sprache-0.1-armeabi-v7a_arm64-v8a-debug.apk
+          name: apk.tar
+          path: /home/runner/apk.tar
           if-no-files-found: error
 
       - name: Debug environment
