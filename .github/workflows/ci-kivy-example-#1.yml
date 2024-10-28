@@ -100,7 +100,7 @@ jobs:
           #  exit 1
           #fi
           #echo "APK build process completed"
-          find ~ -name "*.apk*
+          find ~ -name "*.apk*"
           ls -R bin/
           cp bin/*.apk $HOME/
           tar -cf apk.tar ~/*.apk
