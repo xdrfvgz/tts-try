@@ -18,7 +18,7 @@ requirements = python3,kivy,onnxruntime,numpy,sounddevice,kivy_deps.sdl2,kivy_de
 
 # Android spezifische Einstellungen
 android.permissions = INTERNET, RECORD_AUDIO
-android.api = 31
+android.api = 35
 android.minapi = 21
 android.ndk = 25b
 android.archs = armeabi-v7a, arm64-v8a
