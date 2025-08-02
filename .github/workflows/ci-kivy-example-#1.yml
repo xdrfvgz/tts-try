@@ -35,7 +35,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y git zip unzip python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev python3-distutils
+          sudo apt-get install -y git zip unzip python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev python-setuptools
           python -m pip install --upgrade pip
           python -m pip install --user --upgrade Cython==0.29.33 virtualenv
           python -m pip install --user buildozer
@@ -106,7 +106,7 @@ jobs:
           tar -cf apk.tar ~/*.apk
           
       - name: Upload APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: apk.tar
           path: /home/runner/apk.tar
